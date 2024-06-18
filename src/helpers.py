@@ -5,6 +5,8 @@ import re
 
 from pypdf import PdfReader
 import chromadb
+import google.generativeai as genai
+
 #%%
 #open a pdf and mine it for text.  
 #also break the text into segments, to help with embedding specificity
@@ -82,8 +84,16 @@ def prepare_query(question, vectordb):
     return query
 
 
-#send the prepared query to the LLM
-def send_query(query, API_KEY):
+#initialize the llm
+def configure_llm(API_KEY):
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
-    return response
+    return model
+
+#send the prepared query to the LLM
+def send_query(query, model):
+    response = model.generate_content(query)
+
+    return response.text
 # %%
