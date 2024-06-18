@@ -1,0 +1,1 @@
+#A script to ste up the RAG and run it against the specified questions
