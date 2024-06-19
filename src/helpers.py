@@ -17,6 +17,7 @@ NUM_SENTENCES = 4
 #open a pdf and mine it for text.  
 #also break the text into segments, to help with embedding specificity
 def _process_one_pdf(filename):
+    print(f"Processing filename: {filename}")
     text_segments = []
     with pdfplumber.open(filename) as reader:
 
@@ -24,20 +25,18 @@ def _process_one_pdf(filename):
             page = reader.pages[page_num]
             
             pdf_text = page.extract_text().strip()
-            #segment the text into sentences
+            #segment the text into sentences based on punctuation
             expression = '(?<=[.!?])\s+'
             sentences = re.split(expression, pdf_text)
             # filter out the empty strings
-            sentences = [text for text in sentences if len(text) == 0]
+            sentences = [text for text in sentences if len(text) != 0]
 
             #but mash some back together to have bigger context chunks
             chunks = []
             for i in range(0, len(sentences), NUM_SENTENCES):
                 group = '\n'.join(sentences[i:i + NUM_SENTENCES])
                 chunks.append(group)
-
             text_segments.extend(chunks)
-
             #grab some tables too for good measure
             pdf_tables = page.extract_tables()
             table_segment = ""
